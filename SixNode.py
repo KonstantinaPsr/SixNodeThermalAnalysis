@@ -3,29 +3,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 # GLOBAL_PARAMETERS
-JD = 2459946									#calculated via https://planetcalc.com/503/ 
-RI = 97.786*3.1415926/180						# Obit's inclination
-Re = 6378										# Earth's radius
-h = 600											# Orbit's height
+JD = 2459946							#calculated via https://planetcalc.com/503/ 
+RI = 97.786*3.1415926/180					# Obit's inclination
+Re = 6378							# Earth's radius
+h = 600								# Orbit's height
 R = 6978 				
 J2 = 1082.62*1E-6
-mu 		= 3.986004415e05    					# Gravitational constant (km3/s2)
+mu 		= 3.986004415e05    				# Gravitational constant (km3/s2)
 vel = np.sqrt(mu/(R**3))#0.001081 				# Orbit's angular velocity in rad/s
-v = -(3/2)*(Re**2/R**2)*J2*vel*np.cos(RI) 		#rad/s
-#v = -(3/2)*(Re**2/R**2)*J2*vel*np.cos(RI)*(3600*24) 		#rad/day
-omega = 30				  						# Initial RAAN in degrees
+v = (3/2)*(Re**2/R**2)*J2*vel*np.cos(RI) 			#rad/s
+#v = (3/2)*(Re**2/R**2)*J2*vel*np.cos(RI)*(3600*24) 		#rad/day
+omega = 30				  			# Initial RAAN in degrees
 P  = 5812.0#2*3.1415926/vel   					# Orbit's Period
 beta_cr = 66.06*3.1415926/180 					# Critical beta angle for specific height
-kappa = 400 									#W/m2/K conservative value for Contact conductance
-sigma 	= 5.67e-8								# Stefab-Boltzman constant (W/m^2 K^4)
-m    	= 4000			    					#Sphere mass (g)
+kappa = 400 							#W/m2/K conservative value for Contact conductance
+sigma 	= 5.67e-8						# Stefab-Boltzman constant (W/m^2 K^4)
+m    	= 4000			    				#Sphere mass (g)
 dt      = 1.0#1.0/vel
 
 A_zn = 0.03 	# area in m2
 A_ns = 0.03 	# area in m2
 A_u = 0.01 		# area in m2
-Asmall= 5e-4    # small contact area
-Along = 1.5e-3  # long contact area
+Asmall= 5e-4    # small contact area in m2 for 5mm face thickness (x 10 cm)
+Along = 1.5e-3  # long contact area in m2 for 5mm face thickness (x 30 cm)
 m1 = 1200 		# weight of big area in g
 m2 = 400 		# weight of small area in g
 q_sol = 1368 	#W/m2 mean value of solar radiation
@@ -33,7 +33,7 @@ qgen1 = 124.026 #W/m2 generated heat from large faces so that generated heat/ ar
 qgen2 = 41.342  #W/m2 generated heat from small faces
 
 #Aluminium 6061-T6
-Cp    		= 0.896									# Specific heat capacity (J/g oC)
+Cp    			= 0.896									# Specific heat capacity (J/g oC)
 a 			= 0.96 									#absorptivity (as if coated by Aeroglaze 2306 black paint)
 eps			= 0.9 									# emissivity
 
@@ -132,10 +132,10 @@ while (JD < 2460631):
 		if (RAAN<0):
 			RAAN = RAAN +2.0*3.1415926
 	
-		x = (np.cos(decl_s)*np.sin(RI)*np.sin(RAAN) - np.sin(decl_s)*np.cos(omega_s)*np.sin(RI)*np.cos(RAAN) - np.sin(decl_s)*np.sin(omega_s)*np.cos(RI))
+		x = (np.cos(decl_s)*np.sin(RI)*np.sin(RAAN) - np.sin(decl_s)*np.cos(omega_s)*np.sin(RI)*np.cos(RAAN) + np.sin(decl_s)*np.sin(omega_s)*np.cos(RI))
 		beta = np.arcsin(x)
 		if (abs(beta)<beta_cr): 
-			fe = (1/180)*np.arccos(np.sqrt(2*Re*h+h**2)/((Re+h)*np.cos(beta)))
+			fe = (1/180)*np.arccos(np.sqrt(2*Re*h+h**2)/((Re+h)*np.cos(beta))) # check with 1/pi
 		else:
 
 			fe = 0.0	
